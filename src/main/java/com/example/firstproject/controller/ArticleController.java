@@ -1,8 +1,10 @@
 package com.example.firstproject.controller;
 
 import com.example.firstproject.dto.ArticleForm;
+import com.example.firstproject.dto.CommentDTO;
 import com.example.firstproject.entity.Article;
 import com.example.firstproject.repository.ArticleRepository;
+import com.example.firstproject.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -20,6 +23,7 @@ import java.util.ArrayList;
 public class ArticleController {
 
     private final ArticleRepository articleRepository;
+    private final CommentService commentService;
 
     @GetMapping("/articles/new")
     public String newArticleForm() {
@@ -47,9 +51,11 @@ public class ArticleController {
         // 1. id를 조회해 DB에서 해당 데이터 가져오기
         Article articleEntity = articleRepository.findById(id)
                 .orElse(null);
+        List<CommentDTO> commentDTOs = commentService.comments(id);
 
         // 2. 가져온 데이터를 모델에 등록하기
         model.addAttribute("article", articleEntity);
+        model.addAttribute("commentDTOs", commentDTOs);
 
         // 3. 조회한 데이터를 사용자에게 보여 주기 위한 뷰 페이지 만들고 반환하기
 
